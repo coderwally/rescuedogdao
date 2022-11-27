@@ -1,16 +1,18 @@
-import { useAddress, ConnectWallet, useContract, useNFTBalance, Web3Button } from '@thirdweb-dev/react';
+import { useAddress, ConnectWallet, useContract, useNFTBalance, Web3Button, useNetwork } from '@thirdweb-dev/react';
+import { ChainId } from '@thirdweb-dev/sdk';
 import { useState, useEffect, useMemo } from 'react';
 import { AddressZero } from "@ethersproject/constants";
 
 const App = () => {
   const address = useAddress();
+  const network = useNetwork();
 
   const editionDropAddress = "0x2E7acDD428f4ff041aEe739179552769390Ff387"
   const { contract: editionDrop } = useContract(editionDropAddress, "edition-drop");
   const { contract: token } = useContract('0x5605548Ee1c2daFdfd41b5457808C92B2BCC3e85', 'token');
   const { contract: vote } = useContract("0xE99cd7F0000bAba24093a6C4b1062Eae3Bce914b", "vote");
   const { data: nftBalance } = useNFTBalance(editionDrop, address, "0")
-
+  
   const hasClaimedNFT = useMemo(() => {
     return nftBalance && nftBalance.gt(0)
   }, [nftBalance])
@@ -119,6 +121,18 @@ const App = () => {
       };
     });
   }, [memberAddresses, memberTokenAmounts]);
+
+  if (address && (network?.[0].data.chain.id !== ChainId.Goerli)) {
+    return (
+      <div className="unsupported-network">
+        <h2>Please connect to Goerli</h2>
+        <p>
+          This dapp only works on the Goerli network, please switch networks
+          in your connected wallet.
+        </p>
+      </div>
+    );
+  }
 
   //Wallet not connected
   if (!address) {
