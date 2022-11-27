@@ -138,7 +138,7 @@ const App = () => {
   if (!address) {
     return (
       <div className="landing">
-        <h1>Welcome to Rescue Dog DAO</h1>
+        <h1>Welcome to <br />Rescue 🐶 DAO</h1>
         <div className="btn-hero">
           <ConnectWallet />
         </div>
